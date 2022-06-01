@@ -1,0 +1,18 @@
+#!/usr/bin/env python3
+#
+# Print the releases affected for a Common Vulnerabilities and Exposures CVE number
+# Example 1: 
+#   cvels CVE-2021-36770
+# prints all releases hit by CVE-2021-36770
+#
+import sys
+import nvdlib
+
+for arg in sys.argv[1:len(sys.argv)]:
+    r = nvdlib.getCVE(arg, cpe_dict=True)
+    config = r.configurations.nodes
+    for eachNode in config:
+        for eachChild in eachNode.children:
+            for eachCpe in eachChild.cpe_match:
+                for eachCpeName in eachCpe.cpe_name:
+                    print(eachCpeName.cpe23Uri)
