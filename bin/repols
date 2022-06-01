@@ -1,0 +1,16 @@
+#!/usr/bin/env python3
+#
+# Print out all the repos owned by zosopentools that end in 'port' (e.g. makeport)
+#
+
+import requests
+
+username="zosopentools"
+url = f"https://api.github.com/users/{username}/repos"
+user_data = requests.get(url).json()
+for entry in user_data:
+    html_url = entry['html_url']
+    port = html_url.rfind("port")
+    slash = html_url.rfind("/")+1
+    if slash > 0 and port > 0:
+        print(html_url[slash:port])
