@@ -29,7 +29,6 @@ def fullname(name):
 
 for arg in sys.argv[1:len(sys.argv)]:
     full_name = fullname(arg)
-    print(full_name)
     r = nvdlib.searchCPE(cpeMatchString = f'cpe:2.3:a:{full_name}:', cves=True)
     for eachCPE in r:
         for eachVuln in eachCPE.vulnerabilities:
