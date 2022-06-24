@@ -2,7 +2,7 @@ def repo = params.get("REPO")
 def branch = params.get("BRANCH") 
 def description = params.get("DESCRIPTION") 
 
-# Store results into vars if we want to publish to Slack in the future
+// Store results into vars if we want to publish to Slack in the future
 def buildResult = [:]
 def promoteResult = [:]
 
