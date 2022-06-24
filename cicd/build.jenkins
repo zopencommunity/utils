@@ -1,0 +1,33 @@
+# Assumes utils repo is cloned into PWD
+
+set -e # Fail on error
+set -x # Display verbose output
+
+# Jenkins cannot interpret colours
+export NO_COLOR=1
+
+# source bootstrap environment variables on zot
+. /jenkins/.env
+
+# Add cloned utils dir to PATH
+export PATH="$PWD/bin:$PATH"
+
+# Get port name based on git repo
+PORT_NAME=$(basename "${PORT_GITHUB_URL}")
+PORT_NAME=${PORT_NAME%%.*}
+PORT_NAME=${PORT_NAME%%port}
+
+# Set install dir to workspace/install
+export PORT_INSTALL_DIR="${PWD}/install"
+mkdir -p ${PORT_INSTALL_DIR}
+
+git clone -b "${BRANCH}" "${PORT_GITHUB_URL}" ${PORT_NAME} && cd ${PORT_NAME}
+
+. ./setenv.sh
+build.sh -v
+
+# Copy package to builds dir
+mkdir -p /jenkins/builds/
+cp -r "${PORT_INSTALL_DIR}" "/jenkins/builds/${PORT_NAME}.${BUILD_TIMESTAMP}"
+rm -f "/jenkins/builds/${PORT_NAME}"
+ln -s "/jenkins/builds/${PORT_NAME}.${BUILD_TIMESTAMP}" "/jenkins/builds/${PORT_NAME}"
