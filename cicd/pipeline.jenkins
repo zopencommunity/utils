@@ -1,18 +1,26 @@
+// Generic pipeline that drives the build, test, and promotion of a ZOSOpenTools project
+// This pipeline is called via https://128.168.139.253:8443/view/Framework/job/Port-Pipeline/
+// Inputs:
+//   repo: Github repository (e.g. https://github.com/ZOSOpenTools/perlport)
+//   branch: (default: main)
+//   description: Description of the project
 def repo = params.get("REPO") 
 def branch = params.get("BRANCH") 
 def description = params.get("DESCRIPTION") 
 
-// Store results into vars if we want to publish to Slack in the future
+//TODO: Store results into vars if we want to publish to Slack in the future
 def buildResult = [:]
 def promoteResult = [:]
 
 node('linux') 
 {
   stage('Build and Test') {
+    // Build Job : https://128.168.139.253:8443/view/Framework/job/Port-Build/
     buildResult = build job: 'Port-Build', parameters: [string(name: 'PORT_GITHUB_URL', value: "${repo}"), string(name: 'BRANCH', value: "${branch}")]
   }
   
   stage('Promote') {
+    // Publish Job : https://128.168.139.253:8443/view/Framework/job/Port-Publish/
     promoteResult = build job: 'Port-Publish', parameters: [string(name: 'BUILD_SELECTOR', value: "<SpecificBuildSelector plugin=\"copyartifact@1.46.2\">  <buildNumber>${buildResult.number.toString()}</buildNumber></SpecificBuildSelector>"), string(name: 'REPO', value: "${repo}"), string(name: 'DESCRIPTION', value: "${description}")]
   }
 }
