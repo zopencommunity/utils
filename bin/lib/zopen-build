@@ -866,7 +866,7 @@ resolveCommands()
     PROJECT_NAME="$(echo ${ZOPEN_NAME} | cut -d'-' -f1)"
     if [ "${PROJECT_NAME}" != "${ZOPEN_NAME}" ]; then
       linkPath="$(dirname ${ZOPEN_INSTALL_DIR})/${PROJECT_NAME}"
-      export ZOPEN_LINK_CMD="rm -f ${linkPath} && ln -s ${ZOPEN_INSTALL_DIR} ${linkPath}"
+      export ZOPEN_LINK_CMD="if [ -h ${linkPath} ]; then rm ${linkPath}; fi && ln -s ${ZOPEN_INSTALL_DIR} ${linkPath}"
     fi
   else
     unset ZOPEN_INSTALL_CMD
