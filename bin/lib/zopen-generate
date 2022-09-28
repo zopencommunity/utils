@@ -17,6 +17,8 @@ echo "What is the project name?"
 name=$(getInput)
 echo "Provided a description of the project:"
 description=$(getInput)
+echo "Provide a url link to the license contents: (e.g. https://raw.githubusercontent.com/mirror/make/master/COPYING). (if none, press enter)"
+license_url=$(getInput)
 echo "Enter ${name}'s Git location: (if none, press enter)"
 gitpath=$(getInput)
 echo "Enter ${name}'s build dependencies for the Git source: (example: curl make)"
@@ -43,6 +45,14 @@ fi
 printHeader "Generating $project_path zopen project"
 mkdir -p ${name}port/patches
 
+# Download external LICENSE
+if [ ! -z "${license_url}" ]; then
+  if ! curl -k -L -0 -o "${name}port/patches/LICENSE" "${license_url}" 2>/dev/null; then
+    printError "Could not download ${license_url}"
+  fi
+  printInfo "${name}port/patches/LICENSE.md created"
+fi
+
 buildenv="${name}port/buildenv"
 
 if [ ! -z "$gitpath" ]; then
@@ -66,6 +76,7 @@ else
 fi
 
 cat <<EOT >> $buildenv
+
 zopen_check_results()
 {
   dir="\$1"
@@ -76,7 +87,6 @@ zopen_check_results()
   echo "actualFailures:0"
   echo "totalTests:1"
   echo "expectedFailures:0"
-  
 }
 
 zopen_append_to_env()
@@ -101,6 +111,7 @@ node('linux')
   }
 }
 EOT
+cp "${utildir}/../../LICENSE" "${name}port/LICENSE"
 printHeader "${name} project is ready!"
 printInfo "Create patches under the ${name}port/patches directory"
 printInfo "Run zopen build to build ${name}port"
