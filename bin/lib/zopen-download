@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # Downloads and extracts the latest ZOSOpenTools releases from GitHub
 
 export utildir="$( cd "$(dirname "$0")" >/dev/null 2>&1 && pwd -P )"
@@ -43,7 +43,7 @@ while [[ $# -gt 0 ]]; do
       exit 4
       ;;
     *)
-      printError "Unknown option ${arg} specified"
+      printError "Unknown option ${1} specified"
       ;;
   esac
   shift;
@@ -68,7 +68,7 @@ fi
 repo_results=$(echo "$repo_results" | grep "\"full_name\":" | cut -d '"' -f 4)
 
 if [ ! -z "$list" ]; then
-  printf "${NC}${UNDERLINE}${1}%-25s %-25s\n${NC}" "Repo" "Build Status"
+  printf "${NC}${UNDERLINE}${1}%-25s %-25s %-25s\n${NC}" "Repo" "Build Status" "Quality Report"
 fi
 
 foundPort=false
@@ -79,12 +79,15 @@ for repo in $(echo ${repo_results}); do
     if [ "${repo}" = "${name}" ]; then
       continue;
     fi
-    testStatus=$(curl $OAUTH_TOKEN_OPTION "$OAUTH_TOKEN" -k -s https://api.github.com/repos/ZOSOpenTools/${repo}/releases/latest | grep "\"body\":.*Test Status:" | sed -e "s#.*Test Status:<\/b>##" -e "s#[ ]*(.*##" | tr -d ' ')
-    if [ -z "$testStatus" ]; then
-      testStatus="Untested";
-    fi
     if [ ! -z "$list" ]; then
-      printf '%-25s %-25s\n' "$repo" "$testStatus"
+      statusline=$(curl $OAUTH_TOKEN_OPTION "$OAUTH_TOKEN" -k -s https://api.github.com/repos/ZOSOpenTools/${repo}/releases/latest | grep "\"body\":.*Test Status:")
+      buildQuality=$(echo $statusline | sed -e "s#.*Test Status:<\/b>##" -e "s#[ ]*(.*##" | tr -d ' ')
+      testStatus=$(echo $statusline | sed -e "s#.*Test Status:<\/b>[^(]*(##" -e "s#).*##")
+      if [ -z "$buildQuality" ] || ! echo $statusline | grep -q "Test Status:.*(.*)"; then
+        buildQuality="Untested"
+        testStatus="N/A";
+      fi
+      printf '%-25s %-25s %-25s\n' "$repo" "$buildQuality" "$testStatus"
       continue;
     fi
     foundPort=true
