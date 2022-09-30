@@ -848,16 +848,17 @@ install()
     createEnv
     replaceHardcodedPaths
 
+    if command -V "zopen_post_install" >/dev/null 2>&1; then
+      printVerbose "Running zopen_post_install"
+      zopen_post_install ${ZOPEN_INSTALL_DIR}
+    fi
+
     # Store test.status into installed dir and build dir for cicd
     touch "${ZOPEN_INSTALL_DIR}/test.status"
     chtag -tc 819 "${ZOPEN_INSTALL_DIR}/test.status"
     echo "$ZOPEN_STATUS" > "${ZOPEN_INSTALL_DIR}/test.status"
     cp "${ZOPEN_INSTALL_DIR}/test.status" "test.status"
 
-    if command -V "zopen_post_install" >/dev/null 2>&1; then
-      printVerbose "Running zopen_post_install"
-      zopen_post_install ${ZOPEN_INSTALL_DIR}
-    fi
     if ! runAndLog "${ZOPEN_PAX_CMD}"; then
       printError "Could not generate pax \"${paxFileName}\""
     fi
