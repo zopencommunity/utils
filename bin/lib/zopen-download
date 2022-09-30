@@ -93,13 +93,13 @@ for repo in $(echo ${repo_results}); do
       continue;
     fi
     if [ ! -z "$list" ]; then
-      if ! statusline="$(getContentsFromGithub "https://api.github.com/repos/ZOSOpenTools/${repo}/releases/latest")"; then
+      if ! contents="$(getContentsFromGithub "https://api.github.com/repos/ZOSOpenTools/${repo}/releases/latest")"; then
         exit 4;
       fi
-      statusline="$(echo $statusline | grep "\"body\":.*Test Status:")"
-      buildQuality=$(echo $statusline | sed -e "s#.*Test Status:<\/b>##" -e "s#[ ]*(.*##" | tr -d ' ')
-      testStatus=$(echo $statusline | sed -e "s#.*Test Status:<\/b>[^(]*(##" -e "s#).*##")
-      if [ -z "$buildQuality" ] || ! echo $statusline | grep -q "Test Status:.*(.*)"; then
+      statusline="$(echo "$contents" | grep "\"body\":.*Test Status:.*(.*)<br />")"
+      buildQuality="$(echo "$statusline" | sed -e "s#.*Test Status:<\/b>##" -e "s#[ ]*(.*##" | tr -d ' ')"
+      testStatus="$(echo "$statusline" | sed -e "s#.*Test Status:<\/b>[^(]*(##" -e "s#).*##")"
+      if [ -z "$buildQuality" ]; then
         buildQuality="Untested"
         testStatus="N/A";
       fi
