@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/env bash
 # Used for development to source all the boot/prod .envs
 
 
