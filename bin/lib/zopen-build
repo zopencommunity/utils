@@ -1056,7 +1056,7 @@ resolveCommands()
       export ZOPEN_MAKE_CMD="\"${ZOPEN_MAKE}\" ${ZOPEN_MAKE_OPTS} CC=${CC} \"CPPFLAGS=${CPPFLAGS}\" \"CFLAGS=${CFLAGS}\" CXX=${CXX} \"CXXFLAGS=${CXXFLAGS}\" \"LDFLAGS=${LDFLAGS}\""
       export ZOPEN_MAKE_MINIMAL="no"
     else
-      export ZOPEN_MAKE_CMD="\"${ZOPEN_MAKE}\""
+      export ZOPEN_MAKE_CMD="\"${ZOPEN_MAKE}\" ${ZOPEN_MAKE_OPTS}"
       export ZOPEN_MAKE_MINIMAL="yes"
     fi
   else
