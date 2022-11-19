@@ -47,7 +47,7 @@ totalTests:<totalnumberoftests>
 expectedFailures:<expectednumberoffailures>
 ```
 
-The build will fail to proceed to the install step if `expectedFailures` is greater than `actualFailures`.
+The build will fail to proceed to the install step if `actualFailures` is greater than `expectedFailures`.
 
 Here is an example implementation of `zopen_check_results()`:
 
