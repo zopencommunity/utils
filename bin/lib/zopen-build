@@ -319,7 +319,7 @@ checkEnv()
     elif [ "${ext}x" = "bz2x" ]; then
       implicitDeps="${implicitDeps} bzip2"
     fi
-    printVerbose "Implicitly adding dependencies: ${implicitDeps}"
+    printVerbose "Implicitly adding tarball dependencies: ${implicitDeps}"
     ZOPEN_TARBALL_DEPS="${implicitDeps} ${ZOPEN_TARBALL_DEPS}"
   elif [ "${ZOPEN_TYPE}x" = "GITx" ]; then
     if [ "${ZOPEN_GIT_URL}x" = "x" ]; then
@@ -329,7 +329,7 @@ checkEnv()
       printError "ZOPEN_DEPS or ZOPEN_GIT_DEPS needs to be defined to the ported tools this depends on"
     fi
     implicitDeps="git bash"
-    printVerbose "Implicitly adding dependencies: ${implicitDeps}"
+    printVerbose "Implicitly adding git dependencies: ${implicitDeps}"
     ZOPEN_GIT_DEPS="${implicitDeps} ${ZOPEN_GIT_DEPS}"
   fi
 
@@ -359,7 +359,9 @@ setDepsEnv()
   fi
 
   orig="${PWD}"
-  echo "$deps" | xargs | tr ' ' '\n' | sort -u | while read dep; do
+  # Filter out duplicate deps
+  deps=$(echo "$deps" | xargs | tr ' ' '\n' | sort -u)
+  for dep in $deps; do
     foundDep=false
     for path in `echo ${depsPath} | tr '|' '\n'` ; do
       if [ -r "$path/${dep}/.env" ]; then
