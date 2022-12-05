@@ -328,7 +328,7 @@ checkEnv()
     if [ "${ZOPEN_GIT_DEPS}x" = "x" ]; then
       printError "ZOPEN_DEPS or ZOPEN_GIT_DEPS needs to be defined to the ported tools this depends on"
     fi
-    implicitDeps="git bash"
+    implicitDeps="git"
     printVerbose "Implicitly adding git dependencies: ${implicitDeps}"
     ZOPEN_GIT_DEPS="${implicitDeps} ${ZOPEN_GIT_DEPS}"
   fi
