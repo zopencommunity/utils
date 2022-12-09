@@ -33,6 +33,7 @@ defineEnvironment()
 
   # Required for proper operation of xlclang
   export _C89_CCMODE=1
+  export _CXX_CCMODE=1
 
   # Required for proper operation of (USS shipped) sed
   export _UNIX03=YES
