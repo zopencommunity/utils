@@ -32,6 +32,7 @@ defineEnvironment()
   export _TAG_REDIR_OUT=txt
 
   # Required for proper operation of xlclang
+  export _CC_CCMODE=1
   export _C89_CCMODE=1
   export _CXX_CCMODE=1
 
